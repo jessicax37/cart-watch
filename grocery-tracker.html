@@ -172,7 +172,7 @@
 </div>
 
 <script>
-const STORES = ['Lidl', 'Walmart', 'Aldi', 'Giant', 'Wegmans'];
+const STORES = ['Lidl', 'Walmart', 'Aldi', 'Giant', 'Wegmans', 'Target'];
 
 const SEED_ITEMS = [
   {
@@ -185,7 +185,8 @@ const SEED_ITEMS = [
       Walmart: { price: 3.29, confirmed: false },
       Aldi:    { price: 3.19, confirmed: false },
       Giant:   { price: 4.29, confirmed: false },
-      Wegmans: { price: 4.49, confirmed: false }
+      Wegmans: { price: 4.49, confirmed: false },
+      Target:  { price: 3.99, confirmed: false }
     }
   },
   {
@@ -198,7 +199,8 @@ const SEED_ITEMS = [
       Walmart: { price: 1.38, confirmed: false },
       Aldi:    { price: 1.29, confirmed: false },
       Giant:   { price: 1.69, confirmed: false },
-      Wegmans: { price: 1.79, confirmed: false }
+      Wegmans: { price: 1.79, confirmed: false },
+      Target:  { price: 1.59, confirmed: false }
     }
   },
   {
@@ -211,7 +213,8 @@ const SEED_ITEMS = [
       Walmart: { price: 3.24, confirmed: false },
       Aldi:    { price: 3.19, confirmed: false },
       Giant:   { price: 3.79, confirmed: false },
-      Wegmans: { price: 3.99, confirmed: false }
+      Wegmans: { price: 3.99, confirmed: false },
+      Target:  { price: 3.59, confirmed: false }
     }
   },
   {
@@ -224,7 +227,8 @@ const SEED_ITEMS = [
       Walmart: { price: 4.48, confirmed: false },
       Aldi:    { price: null, confirmed: false },
       Giant:   { price: 5.49, confirmed: false },
-      Wegmans: { price: 5.79, confirmed: false }
+      Wegmans: { price: 5.79, confirmed: false },
+      Target:  { price: 4.99, confirmed: false }
     }
   },
   {
@@ -237,7 +241,22 @@ const SEED_ITEMS = [
       Walmart: { price: 0.68, confirmed: false },
       Aldi:    { price: 0.69, confirmed: false },
       Giant:   { price: 0.99, confirmed: false },
-      Wegmans: { price: 1.09, confirmed: false }
+      Wegmans: { price: 1.09, confirmed: false },
+      Target:  { price: 0.89, confirmed: false }
+    }
+  },
+  {
+    id: 6,
+    name: "Friskies Wet Cat Food",
+    unit: "5.5 oz can",
+    compareBy: "oz",
+    prices: {
+      Lidl:    { price: null, confirmed: false },
+      Walmart: { price: 0.78, confirmed: false },
+      Aldi:    { price: null, confirmed: false },
+      Giant:   { price: 0.99, confirmed: false },
+      Wegmans: { price: 1.09, confirmed: false },
+      Target:  { price: 0.89, confirmed: false }
     }
   }
 ];
