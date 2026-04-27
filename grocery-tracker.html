@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart Watch — Easton, PA</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --surface: #fff;
+    --surface2: #f0ebe0;
+    --border: #ddd5c0;
+    --accent: #2a5c3f;
+    --accent2: #c8372d;
+    --accent3: #e8a020;
+    --text: #1a1612;
+    --muted: #8a7f6e;
+    --best-bg: #e8f5ee;
+    --worst-bg: #fdf0ee;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100vh; }
+
+  header {
+    background: var(--accent); color: #fff;
+    padding: 1.25rem 2rem;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;
+  }
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.02em; }
+  .logo sub { font-family: 'DM Mono', monospace; font-size: 0.65rem; font-weight: 300; letter-spacing: 0.1em; opacity: 0.7; display: block; margin-top: 0.1rem; text-transform: uppercase; }
+  .header-note { font-size: 0.65rem; opacity: 0.6; letter-spacing: 0.05em; text-align: right; line-height: 1.6; }
+
+  .notice { background: #fffbe6; border-bottom: 2px solid var(--accent3); padding: 0.6rem 2rem; font-size: 0.7rem; color: #7a5a00; letter-spacing: 0.03em; }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+
+  .summary-bar {
+    background: var(--accent); color: #fff;
+    padding: 1rem 1.5rem; border-radius: 8px; margin-bottom: 0.75rem;
+    display: flex; gap: 2rem; flex-wrap: wrap; align-items: center;
+  }
+  .summary-stat { text-align: center; }
+  .summary-stat .val { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; display: block; }
+  .summary-stat .lbl { font-size: 0.6rem; opacity: 0.7; letter-spacing: 0.08em; text-transform: uppercase; }
+  .summary-winner { margin-left: auto; text-align: right; }
+  .summary-winner .store-label { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; }
+  .summary-winner .store-sub { font-size: 0.6rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .updated-tag { font-size: 0.6rem; color: var(--muted); margin-bottom: 1.25rem; letter-spacing: 0.05em; }
+
+  .controls { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; }
+  .controls-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; color: var(--accent); margin-right: auto; }
+
+  button { font-family: 'DM Mono', monospace; cursor: pointer; border: none; font-size: 0.75rem; padding: 0.5rem 1rem; border-radius: 4px; transition: all 0.15s; letter-spacing: 0.03em; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #1e4430; }
+  .btn-ghost { background: transparent; border: 1.5px solid var(--border); color: var(--muted); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger { background: transparent; border: 1.5px solid #ddd; color: #bbb; padding: 0.25rem 0.5rem; font-size: 0.65rem; }
+  .btn-danger:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .item-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; margin-bottom: 1.25rem; overflow: hidden; animation: fadeIn 0.25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .item-header { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 1.25rem; background: var(--surface2); border-bottom: 1.5px solid var(--border); flex-wrap: wrap; }
+  .item-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; flex: 1; }
+  .item-unit { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  .best-badge { font-size: 0.6rem; background: var(--accent); color: #fff; padding: 0.2rem 0.5rem; border-radius: 100px; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+
+  .store-rows { padding: 0.25rem 0; }
+  .store-row { display: grid; grid-template-columns: 130px 1fr auto auto; align-items: center; gap: 0.75rem; padding: 0.6rem 1.25rem; border-bottom: 1px solid #f0ebe0; transition: background 0.1s; }
+  .store-row:last-child { border-bottom: none; }
+  .store-row:hover { background: #fafaf7; }
+  .store-row.best { background: var(--best-bg); border-left: 3px solid var(--accent); padding-left: calc(1.25rem - 3px); }
+  .store-row.worst { background: var(--worst-bg); }
+
+  .store-name { font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .price-bar-wrap { position: relative; height: 6px; background: #e8e0d0; border-radius: 3px; }
+  .price-bar { height: 100%; border-radius: 3px; background: var(--accent); transition: width 0.4s ease; min-width: 0; }
+  .store-row.worst .price-bar { background: var(--accent2); }
+
+  .price-display { font-size: 0.8rem; font-weight: 500; white-space: nowrap; min-width: 60px; text-align: right; }
+  .store-row.best .price-display { color: var(--accent); font-weight: 700; }
+  .store-row.worst .price-display { color: var(--accent2); }
+
+  .price-input-wrap { display: flex; align-items: flex-start; gap: 0.3rem; }
+  .price-input { font-family: 'DM Mono', monospace; font-size: 0.75rem; width: 72px; padding: 0.3rem 0.4rem; border: 1.5px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text); text-align: right; }
+  .price-input:focus { outline: none; border-color: var(--accent); }
+  .price-input.estimated { color: var(--muted); font-style: italic; }
+  .price-input.confirmed { color: var(--text); border-color: var(--accent); }
+  .price-label { font-size: 0.55rem; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; text-align: right; margin-top: 2px; }
+  .price-label.confirmed { color: var(--accent); }
+
+  .na-btn { font-size: 0.6rem; padding: 0.22rem 0.45rem; background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 3px; cursor: pointer; margin-top: 1px; }
+  .na-btn.active { background: #eee; color: #999; border-color: #ccc; }
+
+  /* MODAL */
+  .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
+  .modal-backdrop.open { display: flex; }
+  .modal { background: var(--surface); border-radius: 10px; padding: 2rem; width: 90%; max-width: 440px; border: 1.5px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+  .modal h2 { font-family: 'Syne', sans-serif; font-size: 1.1rem; margin-bottom: 1rem; color: var(--accent); }
+  .form-group { margin-bottom: 1rem; }
+  .form-group label { display: block; font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.35rem; }
+  .form-group input, .form-group select { width: 100%; font-family: 'DM Mono', monospace; font-size: 0.85rem; padding: 0.6rem 0.75rem; border: 1.5px solid var(--border); border-radius: 5px; background: var(--bg); color: var(--text); }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.25rem; }
+
+  @media (max-width: 580px) {
+    .store-row { grid-template-columns: 90px 1fr auto; }
+    .price-bar-wrap { display: none; }
+    header { padding: 1rem; }
+    main { padding: 1rem 0.75rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    Cart Watch
+    <sub>Easton, PA 18045 · Local Price Tracker</sub>
+  </div>
+  <div class="header-note">
+    Green highlight = best price · Red = highest<br>
+    Tap any price field to enter your real receipt price
+  </div>
+</header>
+
+<div class="notice">
+  ⚠️ Prices shown in <em>italic</em> are AI estimates for Easton PA (Spring 2026). Enter real prices from your receipt to confirm them. N/A = item not carried at that store.
+</div>
+
+<main>
+  <div id="summary" class="summary-bar"></div>
+  <div class="updated-tag" id="lastUpdated"></div>
+
+  <div class="controls">
+    <span class="controls-title">Your Items</span>
+    <button class="btn-ghost" onclick="exportCSV()">⬇ Export CSV</button>
+    <button class="btn-primary" onclick="openModal()">+ Add Item</button>
+  </div>
+
+  <div id="items-container"></div>
+</main>
+
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <h2>Add New Item</h2>
+    <div class="form-group">
+      <label>Item Name</label>
+      <input type="text" id="newItemName" placeholder="e.g. Shredded Cheddar Cheese" />
+    </div>
+    <div class="form-group">
+      <label>Package Size / Unit</label>
+      <input type="text" id="newItemUnit" placeholder="e.g. 8 oz bag, 1 lb, 1 gallon" />
+    </div>
+    <div class="form-group">
+      <label>Compare Prices By</label>
+      <select id="newItemCompare">
+        <option value="unit">Per Package (total price)</option>
+        <option value="oz">Per Ounce</option>
+        <option value="lb">Per Pound</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="addItem()">Add Item</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORES = ['Lidl', 'Walmart', 'Aldi', 'Giant', 'Wegmans'];
+
+const SEED_ITEMS = [
+  {
+    id: 1,
+    name: "Generic Ground Coffee",
+    unit: "9.6 oz can",
+    compareBy: "oz",
+    prices: {
+      Lidl:    { price: 3.49, confirmed: false },
+      Walmart: { price: 3.29, confirmed: false },
+      Aldi:    { price: 3.19, confirmed: false },
+      Giant:   { price: 4.29, confirmed: false },
+      Wegmans: { price: 4.49, confirmed: false }
+    }
+  },
+  {
+    id: 2,
+    name: "2% Milk",
+    unit: "1 quart",
+    compareBy: "unit",
+    prices: {
+      Lidl:    { price: 1.49, confirmed: false },
+      Walmart: { price: 1.38, confirmed: false },
+      Aldi:    { price: 1.29, confirmed: false },
+      Giant:   { price: 1.69, confirmed: false },
+      Wegmans: { price: 1.79, confirmed: false }
+    }
+  },
+  {
+    id: 3,
+    name: "Eggs",
+    unit: "dozen large",
+    compareBy: "unit",
+    prices: {
+      Lidl:    { price: 3.49, confirmed: false },
+      Walmart: { price: 3.24, confirmed: false },
+      Aldi:    { price: 3.19, confirmed: false },
+      Giant:   { price: 3.79, confirmed: false },
+      Wegmans: { price: 3.99, confirmed: false }
+    }
+  },
+  {
+    id: 4,
+    name: "Outshine No Sugar Added Popsicles",
+    unit: "6-bar box",
+    compareBy: "unit",
+    prices: {
+      Lidl:    { price: null, confirmed: false },
+      Walmart: { price: 4.48, confirmed: false },
+      Aldi:    { price: null, confirmed: false },
+      Giant:   { price: 5.49, confirmed: false },
+      Wegmans: { price: 5.79, confirmed: false }
+    }
+  },
+  {
+    id: 5,
+    name: "Sugar-Free Jello Mix",
+    unit: "generic packet",
+    compareBy: "unit",
+    prices: {
+      Lidl:    { price: 0.79, confirmed: false },
+      Walmart: { price: 0.68, confirmed: false },
+      Aldi:    { price: 0.69, confirmed: false },
+      Giant:   { price: 0.99, confirmed: false },
+      Wegmans: { price: 1.09, confirmed: false }
+    }
+  }
+];
+
+let items = JSON.parse(localStorage.getItem('cartwatch-items') || 'null') || SEED_ITEMS;
+let nextId = Math.max(...items.map(i => i.id), 0) + 1;
+
+function save() {
+  localStorage.setItem('cartwatch-items', JSON.stringify(items));
+  localStorage.setItem('cartwatch-updated', new Date().toISOString());
+}
+
+function getOzFromUnit(unit) {
+  const m = unit.match(/([\d.]+)\s*oz/i);
+  return m ? parseFloat(m[1]) : 1;
+}
+
+function getLbFromUnit(unit) {
+  const m = unit.match(/([\d.]+)\s*lb/i);
+  return m ? parseFloat(m[1]) : 1;
+}
+
+function comparePrice(item, rawPrice) {
+  if (rawPrice === null) return null;
+  if (item.compareBy === 'oz') return rawPrice / getOzFromUnit(item.unit);
+  if (item.compareBy === 'lb') return rawPrice / getLbFromUnit(item.unit);
+  return rawPrice;
+}
+
+function renderSummary() {
+  const totals = {};
+  const counts = {};
+  STORES.forEach(s => { totals[s] = 0; counts[s] = 0; });
+  items.forEach(item => {
+    STORES.forEach(s => {
+      const p = item.prices[s];
+      if (p && p.price !== null) { totals[s] += p.price; counts[s]++; }
+    });
+  });
+  const valid = STORES.filter(s => counts[s] > 0);
+  if (!valid.length) return;
+  const winner = valid.reduce((a, b) => totals[a] < totals[b] ? a : b);
+  const confirmed = items.reduce((acc, item) =>
+    acc + STORES.filter(s => item.prices[s]?.confirmed).length, 0);
+
+  document.getElementById('summary').innerHTML = `
+    <div class="summary-stat"><span class="val">${items.length}</span><span class="lbl">Items tracked</span></div>
+    <div class="summary-stat"><span class="val">${confirmed}</span><span class="lbl">Confirmed prices</span></div>
+    <div class="summary-stat"><span class="val">$${totals[winner].toFixed(2)}</span><span class="lbl">Best basket total</span></div>
+    <div class="summary-winner">
+      <div class="store-label">🏆 ${winner}</div>
+      <div class="store-sub">Cheapest overall</div>
+    </div>`;
+
+  const upd = localStorage.getItem('cartwatch-updated');
+  if (upd) {
+    const d = new Date(upd);
+    document.getElementById('lastUpdated').textContent =
+      `Last updated: ${d.toLocaleDateString()} at ${d.toLocaleTimeString()}`;
+  }
+}
+
+function renderItems() {
+  const container = document.getElementById('items-container');
+  container.innerHTML = '';
+
+  items.forEach(item => {
+    const cps = {};
+    STORES.forEach(s => {
+      const p = item.prices[s];
+      cps[s] = (p && p.price !== null) ? comparePrice(item, p.price) : null;
+    });
+
+    const vals = Object.values(cps).filter(v => v !== null);
+    const minP = vals.length ? Math.min(...vals) : null;
+    const maxP = vals.length ? Math.max(...vals) : null;
+    const bestStore = minP !== null ? STORES.find(s => cps[s] === minP) : null;
+
+    const cpLabel = item.compareBy === 'unit' ? '' :
+                    item.compareBy === 'oz' ? '/oz' : '/lb';
+
+    const card = document.createElement('div');
+    card.className = 'item-card';
+    card.id = `card-${item.id}`;
+
+    card.innerHTML = `
+      <div class="item-header">
+        <div class="item-name">${item.name}</div>
+        <div class="item-unit">${item.unit}${item.compareBy !== 'unit' ? ' · compared per ' + item.compareBy : ''}</div>
+        ${bestStore && vals.length > 1 ? `<span class="best-badge">Best: ${bestStore}</span>` : ''}
+        <button class="btn-danger" onclick="removeItem(${item.id})">✕</button>
+      </div>
+      <div class="store-rows">
+        ${STORES.map(store => {
+          const p = item.prices[store];
+          const isNA = !p || p.price === null;
+          const cp = cps[store];
+          const isBest = !isNA && cp === minP && vals.length > 1;
+          const isWorst = !isNA && cp === maxP && vals.length > 1 && minP !== maxP;
+          const barW = (maxP && cp !== null) ? Math.round((cp / maxP) * 100) : 0;
+          const rawVal = (!isNA && p) ? p.price.toFixed(2) : '';
+          const displayVal = isNA ? '' :
+            (item.compareBy !== 'unit' ? `$${cp.toFixed(3)}${cpLabel}` : `$${cp.toFixed(2)}`);
+          const isConfirmed = !isNA && p && p.confirmed;
+
+          return `
+            <div class="store-row ${isBest ? 'best' : ''} ${isWorst ? 'worst' : ''}">
+              <div class="store-name">${store}</div>
+              <div class="price-bar-wrap">
+                <div class="price-bar" style="width:${isNA ? 0 : barW}%"></div>
+              </div>
+              <div class="price-display">
+                ${isNA ? '<span style="color:#ccc;font-size:0.7rem">N/A</span>' : displayVal}
+              </div>
+              <div class="price-input-wrap">
+                <div>
+                  <input type="number" step="0.01" min="0"
+                    class="price-input ${isNA ? '' : (isConfirmed ? 'confirmed' : 'estimated')}"
+                    value="${rawVal}"
+                    placeholder="price"
+                    title="Enter actual price from receipt"
+                    onchange="updatePrice(${item.id}, '${store}', this.value)" />
+                  <div class="price-label ${isConfirmed ? 'confirmed' : ''}">
+                    ${isNA ? '' : (isConfirmed ? '✓ confirmed' : 'estimated')}
+                  </div>
+                </div>
+                <button class="na-btn ${isNA ? 'active' : ''}"
+                  onclick="toggleNA(${item.id}, '${store}')"
+                  title="Not sold at this store">N/A</button>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>`;
+
+    container.appendChild(card);
+  });
+
+  renderSummary();
+}
+
+function updatePrice(itemId, store, value) {
+  const item = items.find(i => i.id === itemId);
+  if (!item) return;
+  const price = parseFloat(value);
+  if (isNaN(price) || price < 0) return;
+  item.prices[store] = { price, confirmed: true };
+  save();
+  renderItems();
+}
+
+function toggleNA(itemId, store) {
+  const item = items.find(i => i.id === itemId);
+  if (!item) return;
+  const p = item.prices[store];
+  item.prices[store] = (p && p.price === null)
+    ? { price: null, confirmed: false }  // was NA, leave as NA (toggle off handled below)
+    : { price: null, confirmed: false };
+  // actually toggle: if currently null → restore unconfirmed blank; if has value → null
+  if (!p || p.price !== null) {
+    item.prices[store] = { price: null, confirmed: false };
+  } else {
+    item.prices[store] = { price: 0, confirmed: false };
+  }
+  save();
+  renderItems();
+}
+
+function removeItem(itemId) {
+  if (!confirm(`Remove "${items.find(i=>i.id===itemId)?.name}"?`)) return;
+  items = items.filter(i => i.id !== itemId);
+  save();
+  renderItems();
+}
+
+function openModal() {
+  document.getElementById('modal').classList.add('open');
+  setTimeout(() => document.getElementById('newItemName').focus(), 50);
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  ['newItemName','newItemUnit'].forEach(id => document.getElementById(id).value = '');
+}
+
+function addItem() {
+  const name = document.getElementById('newItemName').value.trim();
+  const unit = document.getElementById('newItemUnit').value.trim();
+  const compareBy = document.getElementById('newItemCompare').value;
+  if (!name) { alert('Please enter an item name.'); return; }
+
+  const newItem = {
+    id: nextId++,
+    name,
+    unit: unit || 'each',
+    compareBy,
+    prices: Object.fromEntries(STORES.map(s => [s, { price: null, confirmed: false }]))
+  };
+
+  items.push(newItem);
+  save();
+  closeModal();
+  renderItems();
+  setTimeout(() => {
+    document.getElementById(`card-${newItem.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
+}
+
+function exportCSV() {
+  const rows = [['Item', 'Unit', 'Compare By', ...STORES, 'Best Store', 'Best Price']];
+  items.forEach(item => {
+    const cps = {};
+    STORES.forEach(s => {
+      const p = item.prices[s];
+      cps[s] = (p && p.price !== null) ? comparePrice(item, p.price) : null;
+    });
+    const vals = Object.values(cps).filter(v => v !== null);
+    const minP = vals.length ? Math.min(...vals) : null;
+    const bestStore = minP !== null ? STORES.find(s => cps[s] === minP) : 'N/A';
+    rows.push([
+      item.name, item.unit, item.compareBy,
+      ...STORES.map(s => { const p = item.prices[s]; return (p && p.price !== null) ? p.price.toFixed(2) : 'N/A'; }),
+      bestStore,
+      minP !== null ? `$${minP.toFixed(3)}` : 'N/A'
+    ]);
+  });
+  const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const a = Object.assign(document.createElement('a'), {
+    href: URL.createObjectURL(new Blob([csv], { type: 'text/csv' })),
+    download: 'cartwatch-easton.csv'
+  });
+  a.click();
+}
+
+document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+
+renderItems();
+</script>
+</body>
+</html>
